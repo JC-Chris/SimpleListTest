@@ -15,14 +15,17 @@ namespace SimpleListTest
     {
         public string EntryText { get; set; }
         public ICommand AddItemCommand { get; set; }
-        public ObservableCollection<string> Items { get; set; }
+        public ObservableCollection<Item> Items { get; set; }
 
         public ViewModel()
         {
-            Items = new ObservableCollection<string>(new string[] {"Initial", "Items", "Added"});
+            Items = new ObservableCollection<Item>();
+            Items.Add(new Item() {Id = 1, Name = "Initial"});
+            Items.Add(new Item() {Id = 2, Name = "Added"});
             AddItemCommand = new Command(() =>
-            {    
-                Items.Add(EntryText);
+            {
+                var max = Items.Max(i => i.Id);
+                Items.Add(new Item { Id = ++max, Name = EntryText});
             });
         }
     }

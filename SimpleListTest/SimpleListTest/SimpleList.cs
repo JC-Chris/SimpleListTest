@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 
@@ -39,6 +40,12 @@ namespace SimpleListTest
             BindingMode.TwoWay,
             propertyChanged: ItemsSourceChanged);
 
+        public IEnumerable ItemsSource 
+        {
+            get { return (IEnumerable) GetValue(ItemsSourceProperty); }
+            set { SetValue(ItemsSourceProperty, value); } 
+        }
+
         private static void ItemsSourceChanged(BindableObject bindable, IEnumerable oldvalue, IEnumerable newvalue)
         {
             var list = (SimpleList) bindable;
@@ -52,20 +59,27 @@ namespace SimpleListTest
                 colChange.CollectionChanged += list.colChange_CollectionChanged;
         }
 
+        public string DisplayMember { get; set; }
+
         private void Repopulate()
         {
             _stack.Children.Clear();
             if (ItemsSource == null)
                 return;
             foreach (var item in ItemsSource)
-                _stack.Children.Add(new Label { Text = item.ToString() });
+            {
+                if (string.IsNullOrEmpty(DisplayMember))
+                    _stack.Children.Add(new Label {Text = item.ToString()});
+                else
+                {
+                    var type = item.GetType();
+                    var prop = type.GetRuntimeProperty(DisplayMember);
+                    _stack.Children.Add(new Label() {Text = prop.GetValue(item).ToString()});
+                }
+            }
         }
 
-        public IEnumerable ItemsSource 
-        {
-            get { return (IEnumerable) GetValue(ItemsSourceProperty); }
-            set { SetValue(ItemsSourceProperty, value); } 
-        }
+        
 
         void colChange_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {

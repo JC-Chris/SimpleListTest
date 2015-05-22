@@ -24,6 +24,7 @@ namespace SimpleListTest
             // setup the simple list
             var list = new SimpleList();
             list.SetBinding<ViewModel>(SimpleList.ItemsSourceProperty, a => a.Items);
+            list.DisplayMember = "Name";
 
             // The root page of your application
             MainPage = new ContentPage
