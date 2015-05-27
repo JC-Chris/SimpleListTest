@@ -24,7 +24,12 @@ namespace SimpleListTest
             update.SetBinding<ViewModel>(Button.CommandProperty, m => m.UpdateItemCommand);
 
             // setup the simple list
-            var list = new SimpleList();
+            var list = new SimpleList
+            {
+                HorizontalOptions = LayoutOptions.FillAndExpand, 
+                VerticalOptions = LayoutOptions.FillAndExpand, 
+                Orientation = StackOrientation.Vertical
+            };
             list.SetBinding<ViewModel>(SimpleList.ItemsSourceProperty, a => a.Items);
             list.ItemTemplate = new DataTemplate(typeof(ItemTemplate));
 

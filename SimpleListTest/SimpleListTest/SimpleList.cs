@@ -13,26 +13,8 @@ using Xamarin.Forms;
 
 namespace SimpleListTest
 {
-    public class SimpleList : ContentView
+    public class SimpleList : StackLayout
     {
-        private StackLayout _stack;
-
-        public SimpleList()
-        {
-            _stack = new StackLayout
-            {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.FillAndExpand
-            };
-            var scroll = new ScrollView
-            {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                Content = _stack
-            };
-            Content = scroll;
-        }
-
         public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create<SimpleList, IEnumerable>(
             p => p.ItemsSource,
             default(IEnumerable),
@@ -77,7 +59,7 @@ namespace SimpleListTest
 
         private void Repopulate()
         {
-            _stack.Children.Clear();
+            Children.Clear();
             if (ItemsSource == null)
                 return;
             foreach (var item in ItemsSource)
@@ -88,16 +70,16 @@ namespace SimpleListTest
                     if (layout == null)
                         continue;
                     layout.BindingContext = item;
-                    _stack.Children.Add(layout);   
+                    Children.Add(layout);   
                 }
                 else if (!string.IsNullOrEmpty(DisplayMember))
                 {
                     var type = item.GetType();
                     var prop = type.GetRuntimeProperty(DisplayMember);
-                    _stack.Children.Add(new Label { Text = prop.GetValue(item).ToString() });
+                    Children.Add(new Label { Text = prop.GetValue(item).ToString() });
                 }
                 else
-                    _stack.Children.Add(new Label { Text = item.ToString() });
+                    Children.Add(new Label { Text = item.ToString() });
             }
         }
 
