@@ -59,6 +59,24 @@ namespace SimpleListTest
                 colChange.CollectionChanged += list.colChange_CollectionChanged;
         }
 
+        public static readonly BindableProperty ItemTemplateProperty = BindableProperty.Create<SimpleList, DataTemplate>(
+            p => p.ItemTemplate,
+            default(DataTemplate),
+            BindingMode.Default,
+            propertyChanged: ItemTemplateChanged);
+
+        public DataTemplate ItemTemplate
+        {
+            get { return (DataTemplate)GetValue(ItemTemplateProperty); }
+            set { SetValue(ItemTemplateProperty, value); }
+        }
+
+        private static void ItemTemplateChanged(BindableObject bindable, DataTemplate oldvalue, DataTemplate newvalue)
+        {
+            var list = (SimpleList)bindable;
+            list.Repopulate();
+        }
+
         public string DisplayMember { get; set; }
 
         private void Repopulate()
