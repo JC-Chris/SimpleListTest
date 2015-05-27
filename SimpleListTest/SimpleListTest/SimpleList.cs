@@ -15,7 +15,6 @@ namespace SimpleListTest
 {
     public class SimpleList : ContentView
     {
-        private ScrollView _scroll;
         private StackLayout _stack;
 
         public SimpleList()
@@ -25,13 +24,13 @@ namespace SimpleListTest
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
-            _scroll = new ScrollView
+            var scroll = new ScrollView
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Content = _stack
             };
-            Content = _scroll;
+            Content = scroll;
         }
 
         public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create<SimpleList, IEnumerable>(
@@ -51,9 +50,6 @@ namespace SimpleListTest
             var list = (SimpleList) bindable;
             list.Repopulate();
 
-            var propChange = list.ItemsSource as INotifyPropertyChanged;
-            if (propChange != null)
-                propChange.PropertyChanged += list.propChange_PropertyChanged;
             var colChange = list.ItemsSource as INotifyCollectionChanged;
             if (colChange != null)
                 colChange.CollectionChanged += list.colChange_CollectionChanged;
@@ -86,14 +82,22 @@ namespace SimpleListTest
                 return;
             foreach (var item in ItemsSource)
             {
-                if (string.IsNullOrEmpty(DisplayMember))
-                    _stack.Children.Add(new Label {Text = item.ToString()});
-                else
+                if (ItemTemplate != null)
+                {
+                    var layout = ItemTemplate.CreateContent() as View;
+                    if (layout == null)
+                        continue;
+                    layout.BindingContext = item;
+                    _stack.Children.Add(layout);   
+                }
+                else if (!string.IsNullOrEmpty(DisplayMember))
                 {
                     var type = item.GetType();
                     var prop = type.GetRuntimeProperty(DisplayMember);
-                    _stack.Children.Add(new Label() {Text = prop.GetValue(item).ToString()});
+                    _stack.Children.Add(new Label { Text = prop.GetValue(item).ToString() });
                 }
+                else
+                    _stack.Children.Add(new Label { Text = item.ToString() });
             }
         }
 
@@ -102,11 +106,6 @@ namespace SimpleListTest
         void colChange_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             Repopulate();
-        }
-
-        void propChange_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            //Repopulate();
         }
     }
 }

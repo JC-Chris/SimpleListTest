@@ -20,11 +20,13 @@ namespace SimpleListTest
             entry.SetBinding<ViewModel>(Entry.TextProperty, a => a.EntryText);
             var btn = new Button {Text = "Add Item"};
             btn.SetBinding<ViewModel>(Button.CommandProperty, m => m.AddItemCommand);
+            var update = new Button() {Text = "Update first Item"};
+            update.SetBinding<ViewModel>(Button.CommandProperty, m => m.UpdateItemCommand);
 
             // setup the simple list
             var list = new SimpleList();
             list.SetBinding<ViewModel>(SimpleList.ItemsSourceProperty, a => a.Items);
-            list.DisplayMember = "Name";
+            list.ItemTemplate = new DataTemplate(typeof(ItemTemplate));
 
             // The root page of your application
             MainPage = new ContentPage
@@ -33,13 +35,15 @@ namespace SimpleListTest
                 Content = new StackLayout
                 {
                     VerticalOptions = LayoutOptions.Center,
-                    Children = {
+                    Children = 
+                    {
                         new StackLayout
                         {
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             VerticalOptions = LayoutOptions.FillAndExpand,
                             Children =
                             {
+                                update,
                                 new Label 
                                 {
 							        XAlign = TextAlignment.Center,
@@ -50,7 +54,6 @@ namespace SimpleListTest
                                 list
                             }
                         }
-						
 					}
                 }
             };

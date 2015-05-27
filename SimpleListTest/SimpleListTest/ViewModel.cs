@@ -14,18 +14,25 @@ namespace SimpleListTest
     public class ViewModel
     {
         public string EntryText { get; set; }
-        public ICommand AddItemCommand { get; set; }
+        public ICommand AddItemCommand { get; protected set; }
+        public ICommand UpdateItemCommand { get; protected set; }
         public ObservableCollection<Item> Items { get; set; }
 
         public ViewModel()
         {
-            Items = new ObservableCollection<Item>();
-            Items.Add(new Item() {Id = 1, Name = "Initial"});
-            Items.Add(new Item() {Id = 2, Name = "Added"});
+            Items = new ObservableCollection<Item>
+            {
+                new Item() {Id = 1, Name = "Initial"},
+                new Item() {Id = 2, Name = "Added"}
+            };
             AddItemCommand = new Command(() =>
             {
                 var max = Items.Max(i => i.Id);
                 Items.Add(new Item { Id = ++max, Name = EntryText});
+            });
+            UpdateItemCommand = new Command(() =>
+            {
+                Items[0].Name = "Update: " + Items[0].Name;
             });
         }
     }
