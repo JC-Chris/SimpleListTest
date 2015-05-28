@@ -13,13 +13,18 @@ namespace SimpleListTest
     [ImplementPropertyChanged]
     public class ViewModel
     {
+        private Action<string, string> _popup;
+
         public string EntryText { get; set; }
         public ICommand AddItemCommand { get; protected set; }
         public ICommand UpdateItemCommand { get; protected set; }
+        public ICommand SelectedItemCommand { get; protected set; }
         public ObservableCollection<Item> Items { get; set; }
 
-        public ViewModel()
+        public ViewModel(Action<string, string> popup)
         {
+            _popup = popup;
+
             Items = new ObservableCollection<Item>
             {
                 new Item() {Id = 1, Name = "Initial"},
@@ -34,6 +39,7 @@ namespace SimpleListTest
             {
                 Items[0].Name = "Update: " + Items[0].Name;
             });
+            SelectedItemCommand = new Command<Item>((item) => _popup("Item Selected", string.Format("You selected {0}", item.Name)));
         }
     }
 }

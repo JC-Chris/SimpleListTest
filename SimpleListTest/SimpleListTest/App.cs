@@ -13,7 +13,7 @@ namespace SimpleListTest
         public App()
         {
             // create the VM and initialize the list
-            var vm = new ViewModel();
+            var vm = new ViewModel(ShowPopup);
 
             // setup the input controls
             var entry = new Entry {Placeholder = "Item Name"};
@@ -32,6 +32,7 @@ namespace SimpleListTest
             };
             list.SetBinding<ViewModel>(SimpleList.ItemsSourceProperty, a => a.Items);
             list.ItemTemplate = new DataTemplate(typeof(ItemTemplate));
+            list.SetBinding<ViewModel>(SimpleList.ItemSelectedCommandProperty, m => m.SelectedItemCommand);
 
             // The root page of your application
             MainPage = new ContentPage
@@ -62,6 +63,11 @@ namespace SimpleListTest
 					}
                 }
             };
+        }
+
+        private void ShowPopup(string title, string message)
+        {
+            MainPage.DisplayAlert(title, message, "OK");
         }
 
         protected override void OnStart()

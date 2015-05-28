@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace SimpleListTest
@@ -55,6 +55,13 @@ namespace SimpleListTest
             list.Repopulate();
         }
 
+        public static readonly BindableProperty ItemSelectedCommandProperty = BindableProperty.Create<SimpleList, ICommand>(
+            p => p.ItemSelectedCommand,
+            default(ICommand),
+            BindingMode.Default);
+
+        public ICommand ItemSelectedCommand { get; set; }
+
         public string DisplayMember { get; set; }
 
         private void Repopulate()
@@ -62,28 +69,34 @@ namespace SimpleListTest
             Children.Clear();
             if (ItemsSource == null)
                 return;
+            View child;
             foreach (var item in ItemsSource)
             {
                 if (ItemTemplate != null)
                 {
-                    var layout = ItemTemplate.CreateContent() as View;
-                    if (layout == null)
+                    child = ItemTemplate.CreateContent() as View;
+                    if (child == null)
                         continue;
-                    layout.BindingContext = item;
-                    Children.Add(layout);   
+                    child.BindingContext = item;
                 }
                 else if (!string.IsNullOrEmpty(DisplayMember))
                 {
                     var type = item.GetType();
                     var prop = type.GetRuntimeProperty(DisplayMember);
-                    Children.Add(new Label { Text = prop.GetValue(item).ToString() });
+                    child = new Label {Text = prop.GetValue(item).ToString()};
                 }
                 else
-                    Children.Add(new Label { Text = item.ToString() });
+                    child = new Label { Text = item.ToString() };
+                
+                // add an internal tapped handler
+                var itemTapped = new TapGestureRecognizer();
+                itemTapped.Command = ItemSelectedCommand;
+                itemTapped.CommandParameter = item;
+                child.GestureRecognizers.Add(itemTapped);
+
+                Children.Add(child);
             }
         }
-
-        
 
         void colChange_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
