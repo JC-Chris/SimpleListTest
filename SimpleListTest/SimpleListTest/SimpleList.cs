@@ -69,7 +69,7 @@ namespace SimpleListTest
             // correctly even if the command was set after the items were rendered
             var selectedCommand = new Command<object>(o =>
             {
-                if (ItemSelectedCommand != null && ItemSelectedCommand.CanExecute())
+                if (ItemSelectedCommand != null && ItemSelectedCommand.CanExecute(o))
                     ItemSelectedCommand.Execute(o);
             });
 
