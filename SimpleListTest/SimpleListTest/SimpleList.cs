@@ -55,7 +55,17 @@ namespace SimpleListTest
             list.Repopulate();
         }
 
-        public ICommand ItemSelectedCommand { get; set; }
+        public static readonly BindableProperty ItemSelectedCommandProperty = BindableProperty
+            .Create<SimpleList, ICommand>(
+                p => p.ItemSelectedCommand,
+                default(ICommand),
+                BindingMode.Default);
+
+        public ICommand ItemSelectedCommand
+        {
+            get { return (ICommand) GetValue(ItemSelectedCommandProperty); }
+            set {  SetValue(ItemSelectedCommandProperty, value); }
+        }
 
         public string DisplayMember { get; set; }
 
