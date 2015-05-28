@@ -55,11 +55,6 @@ namespace SimpleListTest
             list.Repopulate();
         }
 
-        public static readonly BindableProperty ItemSelectedCommandProperty = BindableProperty.Create<SimpleList, ICommand>(
-            p => p.ItemSelectedCommand,
-            default(ICommand),
-            BindingMode.Default);
-
         public ICommand ItemSelectedCommand { get; set; }
 
         public string DisplayMember { get; set; }
@@ -69,6 +64,15 @@ namespace SimpleListTest
             Children.Clear();
             if (ItemsSource == null)
                 return;
+            
+            // build our own internal command so that we can respond to selected events
+            // correctly even if the command was set after the items were rendered
+            var selectedCommand = new Command<object>(o =>
+            {
+                if (ItemSelectedCommand != null && ItemSelectedCommand.CanExecute())
+                    ItemSelectedCommand.Execute(o);
+            });
+
             View child;
             foreach (var item in ItemsSource)
             {
@@ -89,9 +93,7 @@ namespace SimpleListTest
                     child = new Label { Text = item.ToString() };
                 
                 // add an internal tapped handler
-                var itemTapped = new TapGestureRecognizer();
-                itemTapped.Command = ItemSelectedCommand;
-                itemTapped.CommandParameter = item;
+                var itemTapped = new TapGestureRecognizer {Command = selectedCommand, CommandParameter = item};
                 child.GestureRecognizers.Add(itemTapped);
 
                 Children.Add(child);

@@ -30,9 +30,9 @@ namespace SimpleListTest
                 VerticalOptions = LayoutOptions.FillAndExpand, 
                 Orientation = StackOrientation.Vertical
             };
+            list.ItemSelectedCommand = vm.SelectedItemCommand;
             list.SetBinding<ViewModel>(SimpleList.ItemsSourceProperty, a => a.Items);
             list.ItemTemplate = new DataTemplate(typeof(ItemTemplate));
-            list.SetBinding<ViewModel>(SimpleList.ItemSelectedCommandProperty, m => m.SelectedItemCommand);
 
             // The root page of your application
             MainPage = new ContentPage
