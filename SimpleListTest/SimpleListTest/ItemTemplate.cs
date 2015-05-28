@@ -14,11 +14,11 @@ namespace SimpleListTest
         public ItemTemplate()
         {
             // create labels to display the item id and name
-            var idLbl = new Label { HorizontalOptions = LayoutOptions.Start };
+            var idLbl = new Label { HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Center};
             idLbl.SetBinding<Item>(Label.TextProperty, i => i.Id);
             Children.Add(idLbl);
 
-            var nameLbl = new Label { HorizontalOptions = LayoutOptions.StartAndExpand };
+            var nameLbl = new Label { HorizontalOptions = LayoutOptions.StartAndExpand, VerticalOptions = LayoutOptions.Center};
             nameLbl.SetBinding<Item>(Label.TextProperty, i => i.Name);
             Children.Add(nameLbl);
 
@@ -36,15 +36,16 @@ namespace SimpleListTest
             HorizontalOptions = LayoutOptions.FillAndExpand;
         }
 
-        protected override void OnBindingContextChanged()
+        protected override void OnParentSet()
         {
-            base.OnBindingContextChanged();
-            var item = BindingContext as Item;
-            if (item == null)
-                return;
+            base.OnParentSet();
 
-            _delBtn.Command = item.ParentVM.DeleteItemCommand;
-            _delBtn.CommandParameter = item;
+            if (ParentView != null && ParentView.BindingContext != null)
+            {
+                var vm = (ViewModel) ParentView.BindingContext;
+                _delBtn.Command = vm.DeleteItemCommand;
+                _delBtn.CommandParameter = (Item) BindingContext;
+            }
         }
     }
 }

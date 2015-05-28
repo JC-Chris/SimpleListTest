@@ -28,15 +28,15 @@ namespace SimpleListTest
 
             Items = new ObservableCollection<Item>
             {
-                new Item() {Id = 1, Name = "Initial", ParentVM = this},
-                new Item() {Id = 2, Name = "Added", ParentVM = this}
+                new Item() {Id = 1, Name = "Initial"},
+                new Item() {Id = 2, Name = "Added"}
             };
             AddItemCommand = new Command(() =>
             {
                 var max = 0;
                 if (Items.Count > 0)
-                    Items.Max(i => i.Id);
-                Items.Add(new Item { Id = ++max, Name = EntryText, ParentVM = this});
+                    max = Items.Max(i => i.Id);
+                Items.Add(new Item { Id = ++max, Name = EntryText});
             });
             UpdateItemCommand = new Command(() => Items[0].Name = "Update: " + Items[0].Name);
             SelectedItemCommand = new Command<Item>((item) => _popup("Item Selected", string.Format("You selected {0}", item.Name)));
