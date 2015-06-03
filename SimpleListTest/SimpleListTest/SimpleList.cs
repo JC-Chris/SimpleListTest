@@ -15,6 +15,13 @@ namespace SimpleListTest
 {
     public class SimpleList : StackLayout
     {
+        public SimpleList()
+        {
+            // default values
+            TextColor = Color.Black;
+            ItemHeightRequest = 22;
+        }
+
         public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create<SimpleList, IEnumerable>(
             p => p.ItemsSource,
             default(IEnumerable),
@@ -71,6 +78,8 @@ namespace SimpleListTest
 
         public Color TextColor { get; set; }
 
+        public int ItemHeightRequest { get; set; }
+
         private void Repopulate()
         {
             Children.Clear();
@@ -97,16 +106,12 @@ namespace SimpleListTest
                 }
                 else if (!string.IsNullOrEmpty(DisplayMember))
                 {
-                    child = new Label { BindingContext = item };
+                    child = new Label { BindingContext = item, TextColor = TextColor, HeightRequest = ItemHeightRequest };
                     child.SetBinding(Label.TextProperty, DisplayMember);
-                    if (TextColor != null)
-                        ((Label)child).TextColor = TextColor;
                 }
                 else
                 {
-                    child = new Label { Text = item.ToString() };
-                    if (TextColor != null)
-                        ((Label)child).TextColor = TextColor;
+                    child = new Label { Text = item.ToString(), TextColor = TextColor, HeightRequest = ItemHeightRequest };
                 }
                 
                 // add an internal tapped handler
