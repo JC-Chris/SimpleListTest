@@ -21,6 +21,7 @@ namespace SimpleListTest
         public ICommand SelectedItemCommand { get; protected set; }
         public ICommand DeleteItemCommand { get; protected set; }
         public ObservableCollection<Item> Items { get; set; }
+        public ObservableCollection<string> SimpleItems { get; set; }
 
         public ViewModel(Action<string, string> popup)
         {
@@ -31,14 +32,21 @@ namespace SimpleListTest
                 new Item() {Id = 1, Name = "Initial"},
                 new Item() {Id = 2, Name = "Added"}
             };
+            SimpleItems = new ObservableCollection<string> { "Initial", "Added" };
+
             AddItemCommand = new Command(() =>
             {
                 var max = 0;
                 if (Items.Count > 0)
                     max = Items.Max(i => i.Id);
                 Items.Add(new Item { Id = ++max, Name = EntryText});
+                SimpleItems.Add(EntryText);
             });
-            UpdateItemCommand = new Command(() => Items[0].Name = "Update: " + Items[0].Name);
+            UpdateItemCommand = new Command(() =>
+            {
+                Items[0].Name = "Update: " + Items[0].Name;
+                SimpleItems[0] = "Update: " + SimpleItems[0];
+            });
             SelectedItemCommand = new Command<Item>((item) => _popup("Item Selected", string.Format("You selected {0}", item.Name)));
             DeleteItemCommand = new Command<Item>((item) => Items.Remove(item));
         }

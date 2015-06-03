@@ -69,6 +69,8 @@ namespace SimpleListTest
 
         public string DisplayMember { get; set; }
 
+        public Color TextColor { get; set; }
+
         private void Repopulate()
         {
             Children.Clear();
@@ -95,12 +97,17 @@ namespace SimpleListTest
                 }
                 else if (!string.IsNullOrEmpty(DisplayMember))
                 {
-                    var type = item.GetType();
-                    var prop = type.GetRuntimeProperty(DisplayMember);
-                    child = new Label {Text = prop.GetValue(item).ToString()};
+                    child = new Label { BindingContext = item };
+                    child.SetBinding(Label.TextProperty, DisplayMember);
+                    if (TextColor != null)
+                        ((Label)child).TextColor = TextColor;
                 }
                 else
+                {
                     child = new Label { Text = item.ToString() };
+                    if (TextColor != null)
+                        ((Label)child).TextColor = TextColor;
+                }
                 
                 // add an internal tapped handler
                 var itemTapped = new TapGestureRecognizer {Command = selectedCommand, CommandParameter = item};

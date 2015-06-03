@@ -30,9 +30,22 @@ namespace SimpleListTest
                 VerticalOptions = LayoutOptions.FillAndExpand, 
                 Orientation = StackOrientation.Vertical
             };
-            list.SetBinding<ViewModel>(SimpleList.ItemSelectedCommandProperty, a => a.SelectedItemCommand);
-            list.SetBinding<ViewModel>(SimpleList.ItemsSourceProperty, a => a.Items);
-            list.ItemTemplate = new DataTemplate(typeof(ItemTemplate));
+
+            // Test binding with an item template
+            //list.SetBinding<ViewModel>(SimpleList.ItemSelectedCommandProperty, a => a.SelectedItemCommand);
+            //list.SetBinding<ViewModel>(SimpleList.ItemsSourceProperty, a => a.Items);
+            //list.ItemTemplate = new DataTemplate(typeof(ItemTemplate));
+
+            // Test binding with a display member and color
+            //list.SetBinding<ViewModel>(SimpleList.ItemSelectedCommandProperty, a => a.SelectedItemCommand);
+            //list.SetBinding<ViewModel>(SimpleList.ItemsSourceProperty, a => a.Items);
+            //list.DisplayMember = "Name";
+            //list.TextColor = Color.Blue;
+            
+            // Test binding using the default binding and color
+            list.SetBinding<ViewModel>(SimpleList.ItemsSourceProperty, a => a.SimpleItems);
+            list.TextColor = Color.Red;
+
 
             // The root page of your application
             MainPage = new ContentPage
